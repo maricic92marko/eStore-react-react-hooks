@@ -1,48 +1,70 @@
 import React from 'react'
-//import fetchApi from '../../modules/fetch-api'
-
+import FetchApi from '../../modules/Fetch-Api'
+import { connect } from 'react-redux';
+import CheckOut from '../checkout'
 
 class Order extends React.Component{
-    state = {order: null}
-/*
-    componentDidMount(){
-        fetchApi('get', `https://student-example-api.herokuapp.com/v1/oreders/${this.props.id}`)
-        .this(json => {
-            this.setState({
-                order : json
-            })
-        })
-    }*/
+    //state = {order: null}
 
-    renderOrder() {
-        const {name, email, order_items} = this.state.order
-        return <div>
-            <h3>Order info</h3>
-            <div>Name:{name}</div>
-            <div>Email:{email}</div>
-            <h4>Items</h4>
-            <ul>
-                {
-                order_items && order_items.map(item =>{
-                    const {product, qty, product : {name, image, price}} = item
-                    return <li>
-                        <img src={image} width={32}/>
-                        {name}
-                        ({qty} @ ${price} = ${parseFloat(qty)* parseFloat(price)})
-                    </li>
-                })
-                }
-            </ul>
-            </div>
+
+
+
+    componentDidMount(){
+        debugger
+        const {changeOrder,products} = this.props
+        if(!products)
+        {  
+            const url =" http://localhost:5000/user_order_list"+this.props.id
+            FetchApi('get', url)
+            .then(json => {
+                console.log(json)
+                debugger
+                changeOrder(json)
+            })
+        debugger
+        }   
     }
 
     render(){
-        const {order} = this.state
+        debugger
+       // const {order} = this.state
         return <div>
-            {order ? this.renderOrder() : "Loading..."}
+            <CheckOut/>
         </div>
 
     }
 }
 
-export default  Order
+function mapStateToProps(state){
+    return{
+        cart: state.cart,
+    }
+}
+
+function mapDispatchToProps(dispatch){
+    debugger
+    return{
+        
+        loadProducts: (products)=>{
+            debugger
+        dispatch({ type: 'LOAD', payload: products})
+        },
+        addToCart:(item)=>{
+            dispatch({type:'ADD',payload:item})
+        },
+        removeFromCart: (item)=>{
+            dispatch({type:'REMOVE',payload:item})
+        },
+        addMultipleitemsToCart: (item)=>{
+            debugger
+            dispatch({type: 'ADDMULTIPLE', payload:item})
+        },
+        changeOrder: (item)=>{
+            debugger
+            dispatch({type: 'CHANGEORDER', payload:item})
+        }
+        
+    }
+}
+
+export default connect(mapStateToProps,mapDispatchToProps)(Order)

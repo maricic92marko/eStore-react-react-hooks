@@ -1,7 +1,9 @@
 import React from 'react'
 import {connect} from  'react-redux'
+import QuantityInput from '../product-listing/QuantityInput'
 
 function Sort(items){
+    debugger
     const cart = [].concat(items).sort((a, b)=> 
          a.id - b.id
       )
@@ -9,7 +11,7 @@ function Sort(items){
 }
 
 function Cart(props) {
-    return  <table>
+    return  <table className="cartTable">
         <thead>
             <tr>
                 <th>Item</th>
@@ -19,25 +21,26 @@ function Cart(props) {
             </tr>
         </thead>
         <tbody>
-            
             {
                 Sort(props.cart).map(item=> 
                 <tr>
-                    <td>{item.name}</td>
+                    <td><img alt="" className="cartImg" src={item.image}></img>
+                    <td>{item.name}</td></td>
+                    
                     <td>{item.quantity}</td>
                     <td>
-                        <button
-                        onClick={()=> props.addToCart(item)}
-                        >+</button>
-                                                <button
-                        onClick={()=> props.removeFromCart(item)}
-                        >-</button>
+                        <QuantityInput
+                        product={item}
+                        addToCart={props.addToCart}
+                        cartItem={item}
+                        addMultipleitemsToCart={props.addMultipleitemsToCart}
+                        removeFromCart={props.removeFromCart}
+                        />
                     </td>
                     <td>
-                        <button 
-                        onClick={() => props.removeAllFromCart(item)}
-                        >
-                            Remove all from cart
+                        <button className="remove_item_btn"
+                        onClick={() => props.removeAllFromCart(item)}>
+                            Remove from cart
                         </button>
                     </td>
                 </tr>)
@@ -62,6 +65,10 @@ function mapDispatchToProps(dispatch){
         },
         removeAllFromCart: (item)=>{
             dispatch({type:'REMOVEALL',payload:item})
+        },
+        addMultipleitemsToCart: (item)=>{
+            debugger
+            dispatch({type: 'ADDMULTIPLE', payload:item})
         }
     }
 }

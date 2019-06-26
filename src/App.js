@@ -3,10 +3,12 @@ import { withRouter} from 'react-router-dom';
 import {connect} from 'react-redux';
 import Router from './Router';
 import Header from './pages/Header';
-    
+import Footer from './pages/Footer';
+
 const  count = ({cart}) =>{
   return cart.reduce((acc, item)=>{
-    return acc + item.quantity
+
+    return parseInt(acc) + parseInt(item.quantity)
   }, 0)
 }
 
@@ -16,21 +18,20 @@ const  price = ({cart}) =>{
   }, 0)
 }
 
-
 class App extends Component {
- 
-  render() {
-
+  render() {  
     return (
       <div className="page-container">
       <header>
-      <Header count={count(this.props)}
+      <Header count={parseInt(count(this.props))}
       price={price(this.props)}/>
       </header>
+    
       <div className="page-body" >
-        <h1>Products</h1>
+        
         <Router/>
         </div>
+        <Footer/>
       </div>
     )
   }
@@ -42,5 +43,20 @@ function mapStateToProps(state){
   }
 }
 
-export default withRouter(connect(mapStateToProps)(App));
+function mapDispatchToProps(dispatch){
+    
+  return{
+       
+      setCurrentClass: (product_class)=>{
+          debugger
+          dispatch({ type: 'CLASS', payload: product_class})
+      },
+      
+      addMultipleitemsToCart: (item)=>{
+          dispatch({type: 'ADDMULTIPLE', payload:item})
+      }
+  }
+}
+
+export default withRouter(connect(mapStateToProps,mapDispatchToProps)(App));
 

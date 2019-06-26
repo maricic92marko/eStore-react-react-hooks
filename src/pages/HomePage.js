@@ -1,11 +1,11 @@
 import React from 'react'
-import ProductListing from '../features/product-listing'
+import ProductClassList from '../features/product-listing/ProductClassList'
 
 
 export default function HomePage(props) {
-  return ( <div>
+  return ( <div className="home-page">
  
-    <ProductListing/>
+    <ProductClassList/>
     <h2>Home page</h2>
     </div>
   )

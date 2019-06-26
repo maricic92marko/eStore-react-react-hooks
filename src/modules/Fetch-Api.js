@@ -1,23 +1,32 @@
 import fetch from 'isomorphic-fetch'
+import axios from 'axios';
 require('es6-promise').polyfill()
 
-
-
-export default function fetchApi(metod, url, data) {
-    const body = metod.toLowerCase() === 'get' 
-    ? {} : {body : JSON.stringify(data)}
-
+export default function fetchApi(method, url, data) {
+   
+    if (method.toLowerCase() === 'get' ) {
+        return fetch(url,{
+            method,
+            headers:{
+                'Accept': 'application/json',
+                'Content-Type': 'application/json'
+            },
+            credentials: 'same-origin'
+            }).then(response => response.json())
+    } 
+    else {
     return fetch(url,{
-        metod,
+        method,
         headers:{
             'Accept': 'application/json',
             'Content-Type': 'application/json',
-            'X-Requested-With': 'XMLHttpRequest'
         },
         credentials: 'same-origin',
-        ...body,
+        body : JSON.stringify(data),
 
-    }).then(response => response.json())
+        }).then(response => response.json())
+
+    }
 }
 
 

@@ -1,48 +1,74 @@
 import React from 'react'
 import {NavLink} from 'react-router-dom'
 import {connect} from 'react-redux'
+import SearchInput from '../features/searchInput'
+import HamburgerMenu from '../features/hamburgerMenu'
+import ProductMenu from '../features/productsMenu'
 
- function Header(cart) {
-  return (
-    <div className="Header">
-      <div className="Header-top">
-        <ul>
-          <div  className="Registration">
-            <li>Hi! <NavLink to ='/'> Sign in</NavLink> or </li>
-            <li><NavLink to ='/'> Register</NavLink></li>
-          </div>
-          <li><NavLink to ='/'>Daily Deals</NavLink></li>
-          <li><NavLink to ='/'>Sell</NavLink></li>
-          <li><NavLink to ='/'>Help & Contact</NavLink></li>
-        </ul>
-        <div className="cartBag">
-          <div className="cartBagImg">
-            <NavLink to ='/cart'>
-              <span className="quantityProducts"><p>{cart.count}</p></span>
-              <img alt="" src="./products/icons-bag.png"></img>
+ class Header extends React.Component {
+ 
+  constructor(props) {
+    super(props);
+    this.state = { width: 0, height: 0 };
+    this.updateWindowDimensions = this.updateWindowDimensions.bind(this);
+  }
+
+  componentDidMount() {
+    this.updateWindowDimensions();
+    window.addEventListener('resize', this.updateWindowDimensions);
+  }
+  
+  componentWillUnmount() {
+    window.removeEventListener('resize', this.updateWindowDimensions);
+  }
+  
+  updateWindowDimensions() {
+    this.setState({ width: window.innerWidth, height: window.innerHeight });
+  }
+
+  render() { 
+    return (
+      <div className="Header-part">
+        <div className="Header-top">
+        {
+            this.state.width >  900 ?
+          <NavLink to ='/'>
+            <p className="Logo">SHOPMATE</p>
+          </NavLink> :null
+        } 
+          <div className="cartBag">
+          <NavLink className="cartLink" to ='/cart'>
+            <div className="cartBagImg">
+            <img alt="" src="./products/Online-Shopping-Cart-PNG-Free-Commercial-Use-Image.png"></img>
+                <span className="quantityProducts">{this.props.count}</span>
+                
+            </div>
             </NavLink>
-          </div>
-          <span className="priceTag"><p>Your Bag ${cart.price}</p></span>
+            <span className="priceTag">Your Bag ${this.props.price}</span>
+
+          </div> 
+
+        </div>
+        <div className="Header-botom">
+        {
+            this.state.width <  900 ?
+            <HamburgerMenu/>:
+            <ul>
+              <li className="products-menu-link">  <ProductMenu/></li>
+              <li className="bot-menu-link"><NavLink  to ='/'>Man</NavLink></li>
+              <li className="bot-menu-link"><NavLink  to ='/'>Kids</NavLink></li>
+              <li className="bot-menu-link"><NavLink  to ='/'>Help & Contact</NavLink></li>
+              <li className="bot-menu-link"><NavLink  to ='/orders/:id'>Order</NavLink></li>
+              <li className="bot-menu-link"><NavLink  to ='/cart'>Cart</NavLink></li>
+            </ul>
+            
+        }
+          <SearchInput/>
+
         </div>
       </div>
-      <div className="Header-botom">
-        <NavLink to ='/'>
-         <p className="Logo">SHOPMATE</p>
-        </NavLink>
-        <ul>
-          <li><NavLink to ='/'>Women</NavLink></li>
-          <li><NavLink to ='/'>Man</NavLink></li>
-          <li><NavLink to ='/'>Kids</NavLink></li>
-          <li><NavLink to ='/order'>Order</NavLink></li>
-        </ul>
-        <div className="searchInput">
-          <img alt="" src="./products/icons-close-small-white.png" className="closeSearchInput"></img>
-          <img  alt="" src="./products/icons-search-white.png" className="searchIcon"></img>
-          <input  type="text" placeholder="Search"></input>
-        </div>
-      </div>
-    </div>
-  )
+    )
+  }
 }
 
 function mapStateToProps(state){
