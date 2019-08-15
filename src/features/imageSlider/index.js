@@ -1,132 +1,113 @@
 import React, { Component } from 'react'
-import { connect } from 'react-redux';
 import {NavLink} from 'react-router-dom'
+import  { Redirect } from 'react-router-dom'
+import {SliderImagesContext} from '../../config/Store'
 
 class ImageSlider extends Component {
 
     constructor (props){
         super(props)
+        debugger
+        
         this.state = {
+            sliderImages:this.props.slider_images,
             count: 0,
-            opimg : Math.floor(Math.random() * 2),
-            imgid : Math.floor(Math.random() * 2 +1) * 2 , 
-            img1id: Math.floor(Math.random() * 3) *2  + 1}
+            opimg : 1,
+            imgid :1
+
+        }
+    }
+
+    componentWillReceiveProps()
+    {
+        const images =  this.props.slider_images;
+
+        if(images && images.length>0){
+            this.setState({ sliderImages : images, imgid : ((Math.floor(Math.random() * 
+                            Math.round(images.length / 2 - 1)) + 1) * 2)})
+        }
+
     }
 
     componentDidMount(){
-        let SliderImg = document.getElementById("SliderImg");
-        let SliderImg1 = document.getElementById("SliderImg1");
-        this.myInterval = setInterval(() => {
-
-                if (!SliderImg.style.opacity || !SliderImg1.style.opacity) {
-                    if(this.state.opimg === 0)
-                   { 
-                       SliderImg.style.opacity = 0;
-                    SliderImg1.style.opacity = 1;
-                    }
-                    else
-                    { 
-                        SliderImg.style.opacity = 1;
-                        SliderImg1.style.opacity = 0;
-                    }
-                }
-                if ( this.state.opimg === 0) {
-                    if( SliderImg.style.opacity > 0)
-                    {
-                        SliderImg.style.opacity = parseFloat(SliderImg.style.opacity) - 0.01;
-                    }
-                    if( SliderImg1.style.opacity <= 1)
-                    {
-                        SliderImg1.style.opacity = parseFloat(SliderImg1.style.opacity) + 0.01;
-                    }
-                    SliderImg1.style.zIndex = 0
-                    SliderImg.style.zIndex = -1
-                }
-                  
-                if ( this.state.opimg ===1 ){
-                      
-                    if( SliderImg1.style.opacity <= 1){
-                        SliderImg.style.opacity = 
-                        parseFloat(SliderImg.style.opacity) + 0.01;
-                    }
-                    if( SliderImg1.style.opacity > 0){
-                        SliderImg1.style.opacity = 
-                        parseFloat(SliderImg1.style.opacity) - 0.01;
-                    }
-                    SliderImg1.style.zIndex = -1
-                    SliderImg.style.zIndex = 0
-                }
-
-                if(SliderImg.style.opacity <= 0.01 
-                    && Math.round(this.state.count) === 6)
-                {
-                    this.setState({opimg : 1,count : 0,img1id : this.state.img1id+2})
-                    if(this.state.img1id > 5)
-                    {
-                        this.setState({count : 0,img1id : 1})
-                    }
-                }
-
-                if(SliderImg.style.opacity >= 0.99 
-                    && Math.round(this.state.count) === 6)
-                {
-                    this.setState({opimg : 0,count : 0,imgid : this.state.imgid+2})
-                    if(this.state.imgid > 5)
-                    {
-                        this.setState({count : 0, imgid :2})
-                    }
-                }
-           
-            this.setState({count : this.state.count + 0.015})
-        }, 15);
-    }
-    render() {
+        debugger
         
-        let SliderImg = document.getElementById("SliderImg");
-        let SliderImg1 = document.getElementById("SliderImg1");
-        
-        if(SliderImg  && SliderImg1 )
-        {
-            if(this.props.products  && this.props.products.length > 0)
-            { 
-                if(SliderImg1.style.opacity <= 0.01 || !SliderImg1.src ) 
-                {            
-                    SliderImg1.src = this.props.products.filter(
-                    product => product.id === this.state.img1id)[0].image
-                }
-                if(SliderImg.style.opacity <= 0.01 || !SliderImg.src) 
-                { 
-                    SliderImg.src = this.props.products.filter(
-                    product => product.id === this.state.imgid)[0].image 
-                }
-            }  
+        const images =  this.props.slider_images;
+
+        if(images && images.length>0){
+            this.setState({ sliderImages : images, imgid : ((Math.floor(Math.random() * 
+                            Math.round(images.length / 2 - 1)) + 1) * 2)})
         }
+
+    this.myInterval = setInterval(() => {
+        if(Math.round(this.state.count) === 8)
+        {   
+            this.setState({imgid : this.state.imgid + 1,count : 0})
+            if(this.state.imgid >  this.state.sliderImages.length -1)
+            {
+            this.setState({imgid : 0, count : 0})
+            }
+        }
+        this.setState({count : this.state.count + 0.015})
+    }, 15);
+}
+    nextImage =()=>{
+        if(this.state.imgid <  this.state.sliderImages.length  -1 )
+        {
+            this.setState({count : 0 ,imgid:this.state.imgid+1}) 
+
+        }
+    }
+    previousImage =()=>{
+        if(this.state.imgid >  0)
+        {
+        this.setState({count:0,imgid:this.state.imgid-1}) 
+        }
+    }
+
+    render() {
+        try{
         return (
-            <div className="ImageSlider">
-                <NavLink to={{
-                    pathname:'/ProductDetails',
-                    product_id: this.state.imgid 
-                    }}>
-                        <img alt="" className="SliderImg" id="SliderImg"></img> 
-                </NavLink>
-                <NavLink to={{
-                    pathname:'/ProductDetails',
-                    product_id: this.state.img1id 
-                    }}>
-                        <img alt="" className="SliderImg" id="SliderImg1"></img>
-                </NavLink>
+            <div className="ImageSlider-wraper">
+            <button id="btnPrevious" 
+            onClick={()=>this.previousImage()} className="ImageSlider-btnPrevious">
+                <img alt='arrow-left' src="/products/iconfinder_arrow-left.png"/>
+            </button>
+            <div className="ImageSlider"
+            style ={{'transform' : `translateX(-${this.state.imgid *100}%)`}}>
+                {  
+                this.state.sliderImages.map( image=>
+                    image.product_id ? 
+                    <NavLink key={image.id} to={{
+                        pathname:image.page_link,
+                        product_id: image.product_id
+                        }}>
+                          {  
+              
+                        <img src={image.image_path} alt="" className="SliderImg" id="SliderImg"></img> 
+                          }
+                        </NavLink>
+                    :<NavLink  key={image.id} to={{
+                        pathname:image.page_link,
+                        product_class: image.class_id
+                        }}>
+                        {  
+                 
+                        <img src={image.image_path} alt="" className="SliderImg" id="SliderImg"></img> 
+                        }
+                        </NavLink>)
+            }
+                </div>
+                <button id="btnNext" 
+                onClick={()=>this.nextImage()} className="ImageSlider-btnNext">
+                    <img alt='arrow-right' src="/products/iconfinder_arrow-right.png"/></button>
             </div>
         )
     }
-}
-
-function mapStateToProps(state){
-    return {
-        products: state.products
+    catch(e){ 
+        return <Redirect to='/'/>
+    }
     }
 }
 
-
-
-export default connect(mapStateToProps)(ImageSlider)
-
+export default ImageSlider

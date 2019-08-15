@@ -3,8 +3,8 @@ import Checkout from '../features/checkout'
 
 export default function CheckoutPage() {
   return (
-    <div>
-      <h2>Checkout</h2>
+    <div className="chekout-page">
+      
       <Checkout/>
     </div>
   )

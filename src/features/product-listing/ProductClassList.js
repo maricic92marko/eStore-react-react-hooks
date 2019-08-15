@@ -1,79 +1,61 @@
-import React, { Component } from 'react'
-import { connect } from 'react-redux';
-import FetchApi from '../../modules/Fetch-Api'
+import React,{useContext} from 'react'
 import {NavLink} from 'react-router-dom'
 import ImageSlider from '../../features/imageSlider'
-
-class ProductClassList extends Component {
-
-    componentDidMount(){
-        debugger
-        const {loadProducts,classReducer,products} = this.props
-        if(products.length < 1)
-        {debugger
-            //FetchApi('get', 'https://student-example-api.herokuapp.com/v1/products.json')
-            FetchApi('get', 'http://localhost:5000/initial_state')
-            .then(json => {
-                debugger
-                loadProducts(json.products)
-                classReducer(json.classes)
-            })
-            debugger
-        }
-    }
+import ProductListItem from '../../features/product-listing/ProductListItem'
+import  { Redirect } from 'react-router-dom'
+import {SliderImagesContext,CurrentClassContext,ProductsContext,ClassesContext} from '../../config/Store'
+ 
+export default function ProductClassList(props) {
+    const [currentClass, setCurrentClass] = useContext(CurrentClassContext)
+    const [products] = useContext(ProductsContext);
+    const [classes] = useContext(ClassesContext)
+    const [sliderImages] = useContext(SliderImagesContext)
     
-    render() {
-        let {product_class} = this.props
-
-        return (
-            <div className="ImageSlider-ProductClassList">
-                <ImageSlider/>
-            <div className="ProductClassList">
-                
-                    { product_class.map(pClass => 
-                         <NavLink className="ProductClassLink"
-                         onClick={()=>{this.props.setClassReducer(pClass.id)}} 
-                         to ={{
-                         pathname:'/ProductList',
-                         product_class:pClass.id
-                        }} >
-                         <p>{pClass.class_name}</p>
-                         <img src={pClass.image_path}/>
-                         </NavLink>
-                    )
-               }
-            </div>
-            </div>
-        )
-    }
+    try{
+    return (
+        <div className="ImageSlider-ProductClassList">
+            <ImageSlider slider_images={sliderImages}/>
+            <div className="ProductClassList-wraper">                
+                <div className="ProductClassList">
+                    { 
+                        
+                        classes.map(pClass => 
+                        <div className="ProductClassLink-wraper" key={pClass.id}>
+                            <p>{pClass.class_name.toUpperCase()}</p>
+                            <NavLink  className="ProductClassLink"
+                            onClick={()=>{ setCurrentClass(pClass.id)}} to ={
+                                {
+                                    pathname:'/ProductList',
+                                    product_class:pClass.id
+                                }
+                            }>
+                                <img alt=" " src={pClass.image_path}/>
+                            </NavLink>
+                        </div>)
+                    }
+                </div>      
+            </div> 
+            {     
+                products.filter(product => product.snizenje === 1).length > 0 ?
+                <div className="snizenja_container">
+                    <h3>Proizvodi na sniženju</h3>
+                    <div className="snizenja">
+                        {
+                           products.filter(product => product.snizenje === 1).map( product =>
+                            <ProductListItem 
+                                product={product} 
+                                key={product.id}
+                            />
+                            )
+                        }
+                    </div>
+                </div>: null
+                     }
+        </div>
+    )
 }
-
-
-function mapStateToProps(state){
-    return {
-        cart: state.cart,
-        products: state.products,
-        product_class: state.classes
-    }
+catch(e){
+         
+    return <Redirect to='/'/>
 }
-
-function mapDispatchToProps(dispatch){
-    
-    return{
-        
-        loadProducts: (products)=>{
-            
-        dispatch({ type: 'LOAD', payload: products})
-        },
-        classReducer:(product_class)=>{
-            debugger
-            dispatch({type:'CLASS',payload:product_class})
-        },
-        setClassReducer:(class_id)=>{
-            debugger
-            dispatch({type:'SETCLASS',payload:class_id})
-        }
-    }
 }
-
-export default connect(mapStateToProps,mapDispatchToProps)(ProductClassList)

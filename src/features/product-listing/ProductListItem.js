@@ -1,53 +1,51 @@
-import React from 'react'
+import React,{useContext} from 'react'
 import QuantityInput from './QuantityInput'
 import {NavLink} from 'react-router-dom'
+import  { Redirect } from 'react-router-dom'
+import {CartContext} from '../../config/Store'
 
-export default class ProductListItem extends React.Component  {
+export default function ProductListItem(props)  {
 
-  constructor(props) {
-    super(props)
-    this.state = { isAddTripState: false }
-  }
+  const [cart, setCart] = useContext(CartContext)
+  const cartItem = cart.filter(cartItem =>cartItem.id === props.product.id)[0]
 
-  showDesc = () => {
-    this.setState({
-      isAddTripState : this.state.isAddTripState ? false :true
-     
-    })
-  }
-  render(){
 
+  try{
   return (
-    <div  className='product-list-item'>
-      
-
-      <h3>{this.props.product.name}</h3>
+  <div  className='product-list-item'>
+      <h3>{ props.product.name}</h3>
       <img height={100}
         alt={''}
-        title={this.props.product.name}
-        src={this.props.product.image}
+        title={ props.product.name}
+        src={ props.product.image}
       />
       <br></br>
-      
-      { this.props.product.description  ?
-      <button >      
-        <NavLink to={{
-          pathname:'/ProductDetails',
-          product_id: this.props.product.id
-          }}>Show description
-         </NavLink>
-      </button> : null}
-      {this.state.isAddTripState &&  <div>{this.props.product.description}</div>}
-     
-      <div>${this.props.product.price}</div>
-      
+      {  
+        props.product.description  ?
+        <button className="product-list-item-btn" >      
+          <NavLink to={{
+            pathname:'/ProductDetails',
+            product_id:  props.product.id
+            }}>Show description
+          </NavLink>
+        </button> : null
+      }
+
+      {
+        props.product.snizenje === 1 ?
+        <div className="price-snizenje">{props.product.metric_unit +' -'+ props.product.price}RSD</div>
+        :<div>{props.product.metricUnitName +' '+ props.product.price}RSD</div> 
+      }
         <QuantityInput
-          product={this.props.product}
-          cartItem={this.props.cartItem}
-          addMultipleitemsToCart={this.props.addMultipleitemsToCart}
-          removeFromCart={this.props.removeFromCart}
+          product={props.product}
+          cart={cart}
+          setCart ={(value)=>setCart(value)}
           />
-    </div>
+  </div>
   )
-  }
+    }
+  catch(e){
+             
+    return <Redirect to='/'/>
+}
 }

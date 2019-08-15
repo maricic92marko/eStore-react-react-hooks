@@ -8,7 +8,7 @@ export default function ProductDetailsPage(props) {
   <div>
  
     <ProductDetails product_id={props.location.product_id}/>
-    <h2>Product page</h2>
+ 
   </div>
   )
 }

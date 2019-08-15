@@ -7,6 +7,8 @@ import CheckOutPage from './pages/CheckoutPage'
 import Alerts from './pages/AlertPage'
 import ProductDetailsPage from './pages/ProductDetailsPage'
 import ProductListPage from './pages/ProductListPage'
+import InfoContactPage from './pages/InfoContactPage'
+
 
 const Router = () => (
     
@@ -18,6 +20,8 @@ const Router = () => (
         <Route exact path ='/alerts' component={Alerts}/>
         <Route exact path ='/ProductList' component={ProductListPage}/>
         <Route exact path ="/ProductDetails" component={ProductDetailsPage}  />
+        <Route exact path ="/InfoContact" component={InfoContactPage}  />
+
     </Switch>
     
 )
